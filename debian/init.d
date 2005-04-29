@@ -1,33 +1,35 @@
 #! /bin/sh
 PATH="/sbin:/usr/sbin:/bin:/usr/bin"
 
-test -x /usr/sbin/change-env || exit 0
+test -x /usr/sbin/nenv-change || exit 0
 
 case "$1" in
 	start)
 #		echo -n "Starting Mobile network environment: "
-#  		change-env `current-env`
+#  		nenv-change -q `nenv-current`
 #		echo "done."
   		;;
 	stop)
 		echo "Stopping mobile network environment: "
-  		change-env stand-alone
-		echo "."
+		if [ x`nenv-current` != "xstand-alone" ]; then 
+		    nenv-change -q stand-alone
+		fi
+		echo "done."
   		;;
 	reload)
 		echo "Reloading mobile network environment: "
-		change-env `current-env`
+		nenv-change -q `nenv-current`
 		echo "done."
   		;;
 	restart|force-reload)
 		echo "Restarting mobile network environment: "
 		$0 stop
 		sleep 2
-		change-env `previous-env`
+		nenv-change -q `nenv-previous`
 		echo "done."
   		;;
 	*)
-  		echo "Usage: /etc/init.d/ntp {start|stop|restart|force-reload}"
+  		echo "Usage: $0 {start|stop|restart|force-reload}"
   		exit 1
 		;;
 esac
