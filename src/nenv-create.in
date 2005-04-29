@@ -6,8 +6,8 @@ args=`getopt --name="$program" --options="hvq" --longoptions="help,verbose,quiet
 eval set -- "$args"
 
 function usage() {
-	cat <<"EOF"
-Usage: $program [-hq] FILE_TO_ADD SRC_LOGICAL_ENV DEST_LOGICAL_ENV
+    cat <<"EOF"
+Usage: $program [-hq] ENV_LOGICAL_NAME
 EOF
 }
 
@@ -38,10 +38,12 @@ while true ; do
     esac
 done
 
-if [ "x$1" = "x" -o "x$2" = "x" -o "x$3" = "x" ]; then
+if [ "x$1" = "x" ]; then
     usage
     exit
 fi
+
+envname="$1"
 
 common_funcs=@libdir@/network-env/common-funcs
 
@@ -51,22 +53,27 @@ if [ ! -x $common_funcs ]; then
 fi
 
 . ${common_funcs}
+envdir=`nenv_confdir $envname`
 
-file="$1"
-src=$2
-dest=$3
-srcconf=`nenv_confdir $src`
-destconf=`nenv_confdir $dest`
 
-if [ x`expr match "$file" "/"` = "x0" ]; then
-    echo "FILE_TO_ADD must be absolute path"
-    exit 1
+if [ ! -d ${cachedir} ]; then
+    $RM -f ${cachedir}
+    $MKDIR -p ${cachedir}
+    true
 fi
 
-if [ ! -e $srcconf$file ]; then
-    echo "${file} does not exist in enviroment $src".
-    exit 1
+if [ -d ${envdir} ]; then
+    if [ "${envname}" != "stand-alone" ]; then
+	echo "warning: Environment ${envname} is already exist."
+    fi
+    exit 0
 fi
 
-$MKDIR -p `dirname $destconf$file`
-$CP -i -p $srcconf$file $destconf$file
+#$MKDIR -p ${envdir}
+
+default_env_dir=@sysconfdir@/network-env/envs/stand-alone
+if [ $default_env_dir != $envdir ]; then
+    if [ -d $default_env_dir ]; then
+	$CP -a ${default_env_dir} ${envdir}
+    fi
+fi

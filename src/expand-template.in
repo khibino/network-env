@@ -5,14 +5,15 @@ program="$0"
 
 envname=$1
 
-common_init=@libdir@/network-env/common-init
+common_funcs=@libdir@/network-env/common-funcs
 
-if [ ! -x $common_init ]; then
+if [ ! -x $common_funcs ]; then
     echo "Installation doesn't finish correctly!"
-    echo "$common_init is not found!"
+    echo "$common_funcs is not found!"
 fi
 
-. ${common_init} $program $envname
+. ${common_funcs}
+envdir=`nenv_confdir $envname`
 
 default_if=`grep 'iface[ \t]*\(eth\|ppp\)' ${envdir}/etc/network/interfaces | awk '{ print $2 }'`
 

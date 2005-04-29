@@ -7,7 +7,7 @@ eval set -- "$args"
 
 function usage() {
 	cat <<"EOF"
-Usage: $program [-hq] FILE_TO_ADD SRC_LOGICAL_ENV DEST_LOGICAL_ENV
+Usage: $program [-hq] FILE_TO_ADD
 EOF
 }
 
@@ -38,7 +38,7 @@ while true ; do
     esac
 done
 
-if [ "x$1" = "x" -o "x$2" = "x" -o "x$3" = "x" ]; then
+if [ "x$1" = "x" ]; then
     usage
     exit
 fi
@@ -53,20 +53,22 @@ fi
 . ${common_funcs}
 
 file="$1"
-src=$2
-dest=$3
-srcconf=`nenv_confdir $src`
-destconf=`nenv_confdir $dest`
 
 if [ x`expr match "$file" "/"` = "x0" ]; then
     echo "FILE_TO_ADD must be absolute path"
     exit 1
 fi
 
-if [ ! -e $srcconf$file ]; then
-    echo "${file} does not exist in enviroment $src".
+if [ -e ${cachedir}${file} ]; then
+    ${file} already have been added.
     exit 1
 fi
 
-$MKDIR -p `dirname $destconf$file`
-$CP -i -p $srcconf$file $destconf$file
+do_cache ${file}
+
+for env in `nenv-list`
+do
+    dest=@sysconfdir@/network-env/envs/${env}${file}
+    $MKDIR -p `dirname ${dest}`
+    $CP -p ${file} ${dest}
+done

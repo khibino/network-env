@@ -1,0 +1,58 @@
+#! /bin/sh
+PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+
+srcfile=common-funcs.in
+
+function nenv_error () {
+    msg=$1
+    file=$2
+    lineno=$3
+    funcname=$4
+    echo "${file}:${lineno}: $msg in function ${funcname}"
+}
+
+function nenv_confdir () {
+    envname="$1"
+    if [ -z "$envname" ]; then
+	nenv_error "envname length is zero" $srcfile $LINENO $FUNCNAME
+    fi
+    echo @sysconfdir@/network-env/envs/$envname
+}
+
+cachedir=@sysconfdir@/network-env/cache
+
+ln_vopt=''
+cp_vopt=''
+rm_vopt=''
+mkdir_vopt=''
+if [ "x$verbose" = "x1" ]; then
+    ln_vopt=-v
+    cp_vopt=-v
+    rm_vopt=-v
+    mkdir_vopt=-v
+fi
+
+LN="ln $ln_vopt"
+CP="cp $cp_vopt"
+RM="rm $rm_vopt"
+MKDIR="mkdir $mkdir_vopt"
+
+function vecho () {
+    if [ "x$verbose" = "x1" ]; then
+	echo "$@"
+    fi
+}
+
+function vrun () {
+    if [ "x$verbose" = "x1" ]; then
+	"$@"
+    fi
+}
+
+function do_cache () {
+	cache=${cachedir}$1
+	$MKDIR -p `dirname $cache`
+	touch $cache
+	file=`echo $file | sed 's@^'$cachedir'@@'`
+	vecho "Cached ${file}."
+}

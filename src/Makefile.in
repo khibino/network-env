@@ -14,8 +14,8 @@ INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_CONF = $(INSTALL_DATA)
 
-SBIN_SCRIPT = create-env change-env add-to-env current-env previous-env list-env
-TOOL_SCRIPT = common-init expand-template
+SBIN_SCRIPT = nenv-create nenv-change nenv-addfile nenv-copyfile nenv-current nenv-previous nenv-list
+TOOL_SCRIPT = common-funcs expand-template
 
 GEN = $(SBIN_SCRIPT) $(TOOL_SCRIPT)
 

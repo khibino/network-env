@@ -27,7 +27,7 @@ case "$1" in
 	if [ -x /usr/sbin/nenv-previous ]; then
 	    prev=`/usr/sbin/nenv-previous`
 	    if [ x"$prev" != x ] ; then
-		/usr/sbin/nenv-change -q "$prev"
+		/usr/sbin/nenv-change "$prev"
 	    fi
 	fi
 	/usr/sbin/nenv-create stand-alone
