@@ -19,8 +19,12 @@ envdir=`nenv_confdir $envname`
 
 ip_addr=""
 if [ -r ${envdir}/etc/network/interfaces ]; then
-    default_if=`grep 'iface[ \t]*\(eth\|ppp\)' ${envdir}/etc/network/interfaces | awk '{ print $2 }'`
+    default_if=`grep 'iface[ \t]*\(eth\|ppp\|wvlan\)' ${envdir}/etc/network/interfaces | awk '{ print $2 }'`
     ip_addr=`ifconfig $default_if | grep 'inet addr' | awk -F ':' '{ print $2 }' | awk '{ print $1 }'`
+fi
+
+if [ -z "$ip_addr" ]; then
+    ip_addr=127.0.0.1
 fi
 
 ENVNAME=$envname
