@@ -1,0 +1,186 @@
+#! /bin/sh
+PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+
+program="$0"
+
+args=`getopt --name="$program" --options="hvq" --longoptions="help,verbose,quiet" -- "$@"`
+eval set -- "$args"
+
+function usage() {
+	cat <<"EOF"
+Usage: $program [-hq] ENV_LOGICAL_NAME
+EOF
+}
+
+verbose=1
+
+while true ; do
+    case "$1" in
+    -h|--help)
+	usage
+	exit 0
+	;;
+    -v|--verbose)
+	verbose=1
+	shift
+	;;
+    -q|--quiet)
+	verbose=0
+	shift
+	;;
+    --)
+	shift
+	break
+	;;
+    *)
+	echo "getopt(1) internal error!!"
+	exit 1
+	;;
+    esac
+done
+
+ln_vopt=''
+cp_vopt=''
+rm_vopt=''
+mkdir_vopt=''
+if [ "x$verbose" = "x1" ]; then
+    ln_vopt=-v
+    cp_vopt=-v
+    rm_vopt=-v
+    mkdir_vopt=-v
+fi
+
+LN="ln $ln_vopt"
+CP="cp $cp_vopt"
+RM="rm $rm_vopt"
+MKDIR="mkdir $mkdir_vopt"
+
+function vecho () {
+    if [ "x$verbose" = "x1" ]; then
+	echo "$@"
+    fi
+}
+
+function vrun () {
+    if [ "x$verbose" = "x1" ]; then
+	"$@"
+    fi
+}
+
+if [ "x$1" = "x" ]; then
+    usage
+    exit
+fi
+
+envname="$1"
+
+common_init=@libdir@/network-env/common-init
+
+if [ ! -x $common_init ]; then
+    echo "Installation doesn't finish correctly!"
+    echo "$common_init is not found!"
+fi
+
+. ${common_init} $program $envname
+
+function do_cache () {
+	cache=${cachedir}$1
+	$MKDIR -p `dirname $cache`
+	touch $cache
+	file=`echo $file | sed 's@^'$cachedir'@@'`
+	vecho "Cached ${file}."
+}
+
+if [ -e ${envdir}/etc/printcap ]; then
+    if [ -x /etc/init.d/lpd ] ; then
+	/etc/init.d/lpd stop
+    fi
+fi
+
+RESTART_DAEMONS="ssh autofs"
+
+for d in $RESTART_DAEMONS ; do
+    if [ -x /etc/init.d/$d ]; then
+	/etc/init.d/$d stop
+    fi
+done
+
+if [ -e ${envdir}/etc/defaultdomain ]; then
+    if [ -e ${envdir}/etc/yp.conf -o -e ${envdir}/etc/ypserv.conf ]; then
+	if [ -x /etc/init.d/nis ] ; then
+	    /etc/init.d/nis stop
+	fi
+    fi
+fi
+
+if [ -e ${envdir}/etc/network/interfaces ]; then
+    ifdown -a
+fi
+
+find ${cachedir} -type f -print | \
+while read file ; do
+    cached=`echo $file | sed 's@^'$cachedir'@@'`
+    vecho "${cached} hits cache."
+    $RM -f ${cached}
+done
+
+find ${envdir} -type f -print | \
+while read file ; do
+    case "$file" in
+    *.template)
+	;;
+    *)
+	dest=`echo $file | sed 's@^'$envdir'@@'`
+	$RM -f $dest
+	$MKDIR -p `dirname ${dest}`
+	$CP -i $file $dest
+	do_cache ${dest}
+	;;
+    esac
+done
+
+if [ -e ${envdir}/etc/network/interfaces ]; then
+    ifup -a
+fi
+
+find ${envdir} -type f -print | \
+while read file ; do
+    case "$file" in
+    *.template)
+	gen=`echo $file | sed -e 's@^'$envdir'@@' -e 's@.template$@@'`
+	$RM -f $gen
+	vecho -n "Generating ${gen}: "
+	$MKDIR -p `dirname ${gen}`
+	@libdir@/network-env/expand-template $envname < $file > $gen
+	vecho "Done."
+	do_cache ${gen}
+	;;
+    *)
+	;;
+    esac
+done
+
+if [ -e ${envdir}/etc/yp.conf -o -e ${envdir}/etc/ypserv.conf ]; then
+    if [ -x /etc/init.d/nis ] ; then
+	/etc/init.d/nis start
+    fi
+fi
+
+for d in $RESTART_DAEMONS ; do
+    if [ -x /etc/init.d/$d ]; then
+	/etc/init.d/$d start
+    fi
+done
+
+if [ -e ${envdir}/etc/printcap ]; then
+    if [ -x /etc/init.d/lpd ] ; then
+	/etc/init.d/lpd start
+    fi
+fi
+
+ifconfig
+
+prevenv=`cat /etc/network-env/current_env`
+echo "$prevenv" > @sysconfdir@/network-env/previous_env
+echo "$envname" > @sysconfdir@/network-env/current_env
+vecho "Changed from $prevenv to $envname."

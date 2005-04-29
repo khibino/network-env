@@ -1,0 +1,6 @@
+#! /bin/sh
+PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+
+if [ -e @sysconfdir@/network-env/current_env ]; then
+    cat @sysconfdir@/network-env/current_env
+fi

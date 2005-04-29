@@ -1,0 +1,15 @@
+#! /bin/sh
+PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+
+env=$1
+
+envs_dir=@sysconfdir@/network-env/envs
+
+if [ -z "$env" ]; then
+    ls $envs_dir
+    exit 0
+fi
+
+cd $envs_dir/$env
+find . -type f -print
+exit 0

@@ -1,0 +1,26 @@
+#! /bin/sh
+PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+
+program="$0"
+
+envname=$1
+
+common_init=@libdir@/network-env/common-init
+
+if [ ! -x $common_init ]; then
+    echo "Installation doesn't finish correctly!"
+    echo "$common_init is not found!"
+fi
+
+. ${common_init} $program $envname
+
+default_if=`grep 'iface[ \t]*\(eth\|ppp\)' ${envdir}/etc/network/interfaces | awk '{ print $2 }'`
+
+ip_addr=`ifconfig $default_if | grep 'inet addr' | awk -F ':' '{ print $2 }' | awk '{ print $1 }'`
+
+ENVNAME=$envname
+IP_ADDR=$ip_addr
+
+sed \
+-e 's/${ENVNAME}/'${ENVNAME}'/g' \
+-e 's/${IP_ADDR}/'${IP_ADDR}'/g'

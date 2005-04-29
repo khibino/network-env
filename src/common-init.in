@@ -1,0 +1,14 @@
+#! /bin/sh
+PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+
+PROGRAM="$1"
+
+ENVNAME="$2"
+
+if [ -z "$PROGRAM" -o -z "$ENVNAME" ]; then
+    echo "Usage: $PROGRAM ENV_LOGICAL_NAME"
+    exit 1
+fi
+
+envdir=@sysconfdir@/network-env/envs/${ENVNAME}
+cachedir=@sysconfdir@/network-env/cache
