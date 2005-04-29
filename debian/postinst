@@ -24,11 +24,13 @@ set -e
 
 case "$1" in
     configure)
-	prev=`/usr/sbin/previous-env`
-	if [ x"$prev" != x ] ; then
-	    /usr/sbin/change-env "$prev"
+	if [ -x /usr/sbin/nenv-previous ]; then
+	    prev=`/usr/sbin/nenv-previous`
+	    if [ x"$prev" != x ] ; then
+		/usr/sbin/nenv-change -q "$prev"
+	    fi
 	fi
-	/usr/sbin/create-env stand-alone
+	/usr/sbin/nenv-create stand-alone
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
