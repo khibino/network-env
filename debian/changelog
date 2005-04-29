@@ -1,3 +1,29 @@
+network-env (0.3.5) unstable; urgency=low
+
+  * nenv-copyenv Usage fix.
+  * Add wvlan prefixed interface to search.
+
+ -- HIBINO Kei <hibi@utmc.or.jp>  Tue, 18 Dec 2001 23:02:59 +0900
+
+network-env (0.3.4) unstable; urgency=low
+
+  * New command nenv-copyenv.
+
+ -- HIBINO Kei <hibi@utmc.or.jp>  Sun,  2 Dec 2001 04:04:19 +0900
+
+network-env (0.3.3) unstable; urgency=low
+
+  * Run ntpdate before ntpd.
+
+ -- HIBINO Kei <hibi@utmc.or.jp>  Mon, 26 Nov 2001 13:18:09 +0900
+
+network-env (0.3.2) unstable; urgency=low
+
+  * Environment logical name check.
+  * Add ntpd support.
+
+ -- HIBINO Kei <hibi@utmc.or.jp>  Sun, 11 Nov 2001 01:01:01 +0900
+
 network-env (0.3.1) unstable; urgency=low
 
   * Little fix of rules file.
