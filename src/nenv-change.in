@@ -1,0 +1,194 @@
+#! /bin/bash -e
+PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+
+program="$0"
+
+args=`getopt --name="$program" --options="hnvq" --longoptions="help,no-act,verbose,quiet" -- "$@"`
+eval set -- "$args"
+
+function usage() {
+    cat <<"EOF"
+Usage: $program [-hnq] ENV_LOGICAL_NAME [LINE]
+EOF
+}
+
+verbose=1
+no_act=0
+
+while true ; do
+    case "$1" in
+    -h|--help)
+	usage
+	exit 0
+	;;
+    -n|--no-act)
+	no_act=1
+	shift
+	;;
+    -v|--verbose)
+	verbose=1
+	shift
+	;;
+    -q|--quiet)
+	verbose=0
+	shift
+	;;
+    --)
+	shift
+	break
+	;;
+    *)
+	echo "$program: getopt(1) internal error!! ($1)"
+	exit 1
+	;;
+    esac
+done
+
+envname="$1"
+line="$2"
+
+if [ "x$envname" = "x" ]; then
+    usage
+    exit
+fi
+
+common_funcs=@libdir@/network-env/common-funcs
+
+if [ ! -x $common_funcs ]; then
+    echo "Installation doesn't finish correctly!"
+    echo "$common_funcs is not found!"
+fi
+
+. ${common_funcs}
+def_command $verbose $no_act
+envdir=`nenv_confdir $envname`
+
+if [ ! -d $envdir ]; then
+    echo "No such environment: $envname"
+    usage
+    exit 1
+fi
+
+if [ "x$no_act" != "x1" ]; then
+    if [ -x /etc/init.d/lpd ] ; then
+	/etc/init.d/lpd stop
+    fi
+
+    if [ -x /etc/init.d/ntp ] ; then
+	/etc/init.d/ntp stop
+    fi
+
+    RESTART_DAEMONS="ssh autofs"
+
+    for d in $RESTART_DAEMONS ; do
+	if [ -x /etc/init.d/$d ]; then
+	    /etc/init.d/$d stop
+	fi
+    done
+
+    if [ -e ${envdir}/etc/yp.conf -o -e ${envdir}/etc/ypserv.conf ]; then
+	if [ -x /etc/init.d/nis ] ; then
+	    /etc/init.d/nis stop
+	fi
+    fi
+
+    ifdown -a
+fi
+# endif [ "x$no_act" != "x1" ]
+
+find ${cachedir} -type f -print | \
+while read file ; do
+    cached=`echo $file | sed 's@^'$cachedir'@@'`
+    vecho "${cached} hits cache."
+    $RM -f ${cached}
+done
+
+find ${envdir} -type f -print | \
+while read file ; do
+    case "$file" in
+    *.before_up)
+	gen=`echo $file | sed -e 's@^'$envdir'@@' -e 's@.before_up$@@'`
+	$RM -f $gen
+	vecho -n "Generating ${gen} from $file: "
+	$MKDIR -p `dirname ${gen}`
+	if [ "x$no_act" != "x1" ]; then
+	    @libdir@/network-env/expand-template $envname $line < $file > $gen
+	fi
+	vecho "Done."
+	do_cache ${gen}
+	;;
+    *.after_up)
+	;;
+    *)
+	dest=`echo $file | sed 's@^'$envdir'@@'`
+	$RM -f $dest
+	$MKDIR -p `dirname ${dest}`
+	$CP -i $file $dest
+	do_cache ${dest}
+	;;
+    esac
+done
+
+if [ "x$no_act" != "x1" ]; then
+    if [ -e ${envdir}/etc/network/interfaces -o \
+	 -e ${envdir}/etc/network/interfaces.before_up ]; then
+	ifup -a
+    fi
+fi
+
+find ${envdir} -type f -print | \
+while read file ; do
+    case "$file" in
+    *.after_up)
+	gen=`echo $file | sed -e 's@^'$envdir'@@' -e 's@.after_up$@@'`
+	$RM -f $gen
+	vecho -n "Generating ${gen} from $file: "
+	$MKDIR -p `dirname ${gen}`
+	@libdir@/network-env/expand-template $envname $line < $file > $gen
+	vecho "Done."
+	do_cache ${gen}
+	;;
+    *)
+	;;
+    esac
+done
+
+if [ "x$no_act" != "x1" ]; then
+    if [ -e ${envdir}/etc/defaultdomain ]; then
+	if [ -e ${envdir}/etc/yp.conf -o -e ${envdir}/etc/ypserv.conf ]; then
+	    if [ -x /etc/init.d/nis ] ; then
+		/etc/init.d/nis start
+	    fi
+	fi
+    fi
+
+    for d in $RESTART_DAEMONS ; do
+	if [ -x /etc/init.d/$d ]; then
+	    /etc/init.d/$d start
+	fi
+    done
+
+    if [ -e ${envdir}/etc/ntp.conf ]; then
+	if [ -x /etc/init.d/ntpdate ] ; then
+	    /etc/init.d/ntpdate start
+	fi
+	if [ -x /etc/init.d/ntp ] ; then
+	    /etc/init.d/ntp start
+	fi
+    fi
+
+    if [ -e ${envdir}/etc/printcap ]; then
+	if [ -x /etc/init.d/lpd ] ; then
+	    /etc/init.d/lpd start
+	fi
+    fi
+
+    ifconfig
+
+    prevenv=`cat /etc/network-env/current_env`
+    echo "$prevenv" > @sysconfdir@/network-env/previous_env
+    echo "$envname" > @sysconfdir@/network-env/current_env
+    vecho "Changed from $prevenv to $envname."
+fi
+
+

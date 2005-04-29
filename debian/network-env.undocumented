@@ -1,0 +1,8 @@
+nenv-create.8
+nenv-change.8
+nenv-addfile.8
+nenv-copyenv.8
+nenv-copyfile.8
+nenv-current.8
+nenv-previous.8
+nenv-list.8

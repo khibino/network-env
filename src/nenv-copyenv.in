@@ -1,0 +1,75 @@
+#! /bin/bash -e
+
+program="$0"
+
+args=`getopt --name="$program" --options="hnvq" --longoptions="help,no-act,verbose,quiet" -- "$@"`
+eval set -- "$args"
+
+function usage() {
+	cat <<"EOF"
+Usage: $program [-hnq] FILE_TO_ADD SRC_LOGICAL_ENV DEST_LOGICAL_ENV
+EOF
+}
+
+verbose=1
+no_act=0
+
+while true ; do
+    case "$1" in
+    -h|--help)
+	usage
+	exit 0
+	;;
+    -n|--no-act)
+	no_act=1
+	shift
+	;;
+    -v|--verbose)
+	verbose=1
+	shift
+	;;
+    -q|--quiet)
+	verbose=0
+	shift
+	;;
+    --)
+	shift
+	break
+	;;
+    *)
+	echo "$program getopt(1) internal error!!($1)"
+	exit 1
+	;;
+    esac
+done
+
+common_funcs=@libdir@/network-env/common-funcs
+
+if [ ! -x $common_funcs ]; then
+    echo "Installation doesn't finish correctly!"
+    echo "$common_funcs is not found!"
+fi
+
+. ${common_funcs}
+def_command $verbose $no_act
+
+src=$1
+dest=$2
+if [ "x$src" = "x" -o "x$dest" = "x" ]; then
+    usage
+    exit
+fi
+srcconf=`nenv_confdir $src`
+destconf=`nenv_confdir $dest`
+
+if [ ! -d $srcconf ]; then
+    echo "No such environment: $src"
+    exit 1
+fi
+
+if [ -d $destconf ]; then
+    echo "Environment already exists: $dest"
+    exit 1
+fi
+
+$CP -a $srcconf $destconf
