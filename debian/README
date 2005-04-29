@@ -1,16 +1,16 @@
 The Debian Package network-env
-----------------------------
+------------------------------
 
-1. Run create-env ENV_LOGICAL_NAME.
+1. Run nenv-create ENV_LOGICAL_NAME.
 
 2. Add configuration file depending on individual network enviroments 
    to the set controled by this tool.
    For example,
 
-       add-to-env /etc/network/interfaces
-       add-to-env /etc/mailname
-       add-to-env /etc/defaultdomain
+       nenv-addfile /etc/network/interfaces
+       nenv-addfile /etc/mailname
+       nenv-addfile /etc/defaultdomain
 
-3. change-env ENV_LOGICAL_NAME.
+3. nenv-change ENV_LOGICAL_NAME.
 
 HIBINO Kei <hibi@utmc.or.jp>, Mon, 24 Sep 2001 00:45:48 +0900
