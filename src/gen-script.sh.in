@@ -1,0 +1,14 @@
+#! /bin/sh
+
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+sysconfdir=@sysconfdir@
+sbindir=@sbindir@
+
+sed \
+-e "s%@"prefix"@%$prefix%g" \
+-e "s%@"exec_prefix"@%$prefix%g" \
+-e "s%@"libdir"@%$libdir%g" \
+-e "s%@"sysconfdir"@%$sysconfdir%g" \
+-e "s%@"sbindir"@%$sbidir%g"

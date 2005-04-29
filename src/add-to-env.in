@@ -1,0 +1,103 @@
+#! /bin/sh
+
+program="$0"
+
+args=`getopt --name="$program" --options="hvq" --longoptions="help,verbose,quiet" -- "$@"`
+eval set -- "$args"
+
+function usage() {
+	cat <<"EOF"
+Usage: $program [-hq] FILE_TO_ADD
+EOF
+}
+
+verbose=1
+
+while true ; do
+    case "$1" in
+    -h|--help)
+	usage
+	exit 0
+	;;
+    -v|--verbose)
+	verbose=1
+	shift
+	;;
+    -q|--quiet)
+	verbose=0
+	shift
+	;;
+    --)
+	shift
+	break
+	;;
+    *)
+	echo "getopt(1) internal error!!"
+	exit 1
+	;;
+    esac
+done
+
+ln_vopt=''
+cp_vopt=''
+rm_vopt=''
+mkdir_vopt=''
+if [ "x$verbose" = "x1" ]; then
+    ln_vopt=-v
+    cp_vopt=-v
+    rm_vopt=-v
+    mkdir_vopt=-v
+fi
+
+LN="ln $ln_vopt"
+CP="cp $cp_vopt"
+RM="rm $rm_vopt"
+MKDIR="mkdir $mkdir_vopt"
+
+function vecho () {
+    if [ "x$verbose" = "x1" ]; then
+	echo "$@"
+    fi
+}
+
+function vrun () {
+    if [ "x$verbose" = "x1" ]; then
+	"$@"
+    fi
+}
+
+cachedir=@sysconfdir@/network-env/cache
+
+function do_cache () {
+	cache=${cachedir}$1
+	$MKDIR -p `dirname $cache`
+	touch $cache
+	file=`echo $file | sed 's@^'$cachedir'@@'`
+	vecho "Cached ${file}."
+}
+
+if [ "x$1" = "x" ]; then
+    usage
+    exit
+fi
+
+file="$1"
+
+if [ x`expr match "$file" "/"` = "x0" ]; then
+    echo "FILE_TO_ADD must be absolute path"
+    exit 1
+fi
+
+if [ -e ${cachedir}${file} ]; then
+    ${file} already have been added.
+    exit 1
+fi
+
+do_cache ${file}
+
+for env in `list-env`
+do
+    dest=@sysconfdir@/network-env/envs/${env}${file}
+    $MKDIR -p `dirname ${dest}`
+    $CP -p ${file} ${dest}
+done

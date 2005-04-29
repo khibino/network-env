@@ -1,0 +1,11 @@
+INST_ROOT = 
+
+%:
+	make -C src $@ INST_ROOT="$(INST_ROOT)"
+
+all:
+
+distclean:
+	make -C src $@ INST_ROOT="$(INST_ROOT)"
+	$(RM) Makefile config.*
+

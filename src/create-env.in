@@ -1,0 +1,24 @@
+#! /bin/sh
+
+common_init=@libdir@/network-env/common-init
+
+if [ ! -x $common_init ]; then
+    echo "Installation doesn't finish correctly!"
+    echo "$common_init is not found!"
+fi
+
+. ${common_init} $0 $1
+
+ENVNAME="$1"
+
+if [ ! -d ${cachedir} ]; then
+    rm -f ${cachedir}
+    mkdir -p ${cachedir}
+    true
+fi
+
+if [ -d ${envdir} ]; then
+    echo "warning: Environment ${ENVNAME} is already exist."
+fi
+
+mkdir -p ${envdir}
