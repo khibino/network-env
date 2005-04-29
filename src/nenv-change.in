@@ -176,9 +176,6 @@ if [ "x$no_act" != "x1" ]; then
     done
 
     if [ -e ${envdir}/etc/ntp.conf ]; then
-	if [ -x /etc/init.d/ntpdate ] ; then
-	    /etc/init.d/ntpdate start
-	fi
 	if [ -x /etc/init.d/ntp ] ; then
 	    /etc/init.d/ntp start
 	fi
