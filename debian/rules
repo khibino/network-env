@@ -65,13 +65,10 @@ binary-indep: build install
 	dh_undocumented -i
 	dh_installchangelogs  -i
 	dh_link -i
-#	dh_strip -i
 	dh_compress -i
 	dh_fixperms -i
-#	dh_makeshlibs -i
 	dh_installdeb -i
 #	dh_perl -i
-	dh_shlibdeps -i
 	dh_gencontrol -i
 	dh_md5sums -i
 	dh_builddeb -i
