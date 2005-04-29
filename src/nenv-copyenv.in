@@ -7,7 +7,7 @@ eval set -- "$args"
 
 function usage() {
 	cat <<"EOF"
-Usage: $program [-hnq] FILE_TO_ADD SRC_LOGICAL_ENV DEST_LOGICAL_ENV
+Usage: $program [-hnq] SRC_LOGICAL_ENV DEST_LOGICAL_ENV
 EOF
 }
 
