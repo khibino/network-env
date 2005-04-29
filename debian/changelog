@@ -1,3 +1,16 @@
+network-env (0.3.0) unstable; urgency=low
+
+  * Add --no-act option.
+  * Template expand timing becomes two times.
+
+ -- HIBINO Kei <hibi@utmc.or.jp>  Tue, 30 Oct 2001 21:20:14 +0900
+
+network-env (0.02.1) unstable; urgency=low
+
+  * Add sh option '-e'.
+
+ -- HIBINO Kei <hibi@utmc.or.jp>  Tue, 30 Oct 2001 10:16:14 +0900
+
 network-env (0.02) unstable; urgency=low
 
   * Change command names.
