@@ -1,15 +1,31 @@
-#! /bin/sh
+#! /bin/sh -e
 PATH="/sbin:/usr/sbin:/bin:/usr/bin"
 
-env=$1
+envname=$1
 
 envs_dir=@sysconfdir@/network-env/envs
 
-if [ -z "$env" ]; then
+if [ -z "$envname" ]; then
     ls $envs_dir
     exit 0
 fi
 
-cd $envs_dir/$env
+common_funcs=@libdir@/network-env/common-funcs
+
+if [ ! -x $common_funcs ]; then
+    echo "Installation doesn't finish correctly!"
+    echo "$common_funcs is not found!"
+fi
+
+. ${common_funcs}
+def_command $verbose $no_act
+envdir=`nenv_confdir $envname`
+
+if [ ! -d ${envdir} ]; then
+    echo "Environment $envname does not exist."
+    exit 1
+fi
+
+cd $envdir
 find . -type f -print
 exit 0

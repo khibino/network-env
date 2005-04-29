@@ -1,23 +1,28 @@
-#! /bin/sh
+#! /bin/bash -e
 
 program="$0"
 
-args=`getopt --name="$program" --options="hvq" --longoptions="help,verbose,quiet" -- "$@"`
+args=`getopt --name="$program" --options="hnvq" --longoptions="help,no-act,verbose,quiet" -- "$@"`
 eval set -- "$args"
 
 function usage() {
 	cat <<"EOF"
-Usage: $program [-hq] FILE_TO_ADD
+Usage: $program [-hnq] FILE_TO_ADD
 EOF
 }
 
 verbose=1
+no_act=0
 
 while true ; do
     case "$1" in
     -h|--help)
 	usage
 	exit 0
+	;;
+    -n|--no-act)
+	no_act=1
+	shift
 	;;
     -v|--verbose)
 	verbose=1
@@ -38,7 +43,8 @@ while true ; do
     esac
 done
 
-if [ "x$1" = "x" ]; then
+file="$1"
+if [ "x$file" = "x" ]; then
     usage
     exit
 fi
@@ -51,16 +57,15 @@ if [ ! -x $common_funcs ]; then
 fi
 
 . ${common_funcs}
-
-file="$1"
+def_command $verbose $no_act
 
 if [ x`expr match "$file" "/"` = "x0" ]; then
-    echo "FILE_TO_ADD must be absolute path"
+    echo "FILE_TO_ADD must be absolute path."
     exit 1
 fi
 
 if [ -e ${cachedir}${file} ]; then
-    ${file} already have been added.
+    echo "${file} already have been added."
     exit 1
 fi
 

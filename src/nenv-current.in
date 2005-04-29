@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/sh -e
 PATH="/sbin:/usr/sbin:/bin:/usr/bin"
 
 if [ -e @sysconfdir@/network-env/current_env ]; then

@@ -1,17 +1,18 @@
-#! /bin/sh
+#! /bin/bash -e
 
 program="$0"
 
-args=`getopt --name="$program" --options="hvq" --longoptions="help,verbose,quiet" -- "$@"`
+args=`getopt --name="$program" --options="hnvq" --longoptions="help,no-act,verbose,quiet" -- "$@"`
 eval set -- "$args"
 
 function usage() {
     cat <<"EOF"
-Usage: $program [-hq] ENV_LOGICAL_NAME
+Usage: $program [-hnq] ENV_LOGICAL_NAME
 EOF
 }
 
 verbose=1
+no_act=0
 
 while true ; do
     case "$1" in

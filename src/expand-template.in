@@ -1,9 +1,10 @@
-#! /bin/sh
+#! /bin/bash -e
 PATH="/sbin:/usr/sbin:/bin:/usr/bin"
 
 program="$0"
 
-envname=$1
+envname="$1"
+line="$2"
 
 common_funcs=@libdir@/network-env/common-funcs
 
@@ -13,15 +14,20 @@ if [ ! -x $common_funcs ]; then
 fi
 
 . ${common_funcs}
+def_command 1 0
 envdir=`nenv_confdir $envname`
 
-default_if=`grep 'iface[ \t]*\(eth\|ppp\)' ${envdir}/etc/network/interfaces | awk '{ print $2 }'`
-
-ip_addr=`ifconfig $default_if | grep 'inet addr' | awk -F ':' '{ print $2 }' | awk '{ print $1 }'`
+ip_addr=""
+if [ -r ${envdir}/etc/network/interfaces ]; then
+    default_if=`grep 'iface[ \t]*\(eth\|ppp\)' ${envdir}/etc/network/interfaces | awk '{ print $2 }'`
+    ip_addr=`ifconfig $default_if | grep 'inet addr' | awk -F ':' '{ print $2 }' | awk '{ print $1 }'`
+fi
 
 ENVNAME=$envname
 IP_ADDR=$ip_addr
+LINE=$line
 
 sed \
 -e 's/${ENVNAME}/'${ENVNAME}'/g' \
+-e 's/${LINE}/'${LINE}'/g' \
 -e 's/${IP_ADDR}/'${IP_ADDR}'/g'

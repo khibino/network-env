@@ -11,8 +11,10 @@ case "$1" in
   		;;
 	stop)
 		echo "Stopping mobile network environment: "
-  		nenv-change stand-alone
-		echo "."
+		if [ x`nenv-current` != "xstand-alone" ]; then 
+		    nenv-change stand-alone
+		fi
+		echo "done."
   		;;
 	reload)
 		echo "Reloading mobile network environment: "

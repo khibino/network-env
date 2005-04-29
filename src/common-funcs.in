@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash -e
 PATH="/sbin:/usr/sbin:/bin:/usr/bin"
 
 srcfile=common-funcs.in
@@ -21,21 +21,39 @@ function nenv_confdir () {
 
 cachedir=@sysconfdir@/network-env/cache
 
-ln_vopt=''
-cp_vopt=''
-rm_vopt=''
-mkdir_vopt=''
-if [ "x$verbose" = "x1" ]; then
-    ln_vopt=-v
-    cp_vopt=-v
-    rm_vopt=-v
-    mkdir_vopt=-v
-fi
+function def_command () {
+    local  verbose="$1"
+    local  no_act="$2"
 
-LN="ln $ln_vopt"
-CP="cp $cp_vopt"
-RM="rm $rm_vopt"
-MKDIR="mkdir $mkdir_vopt"
+    local  ln_vopt=''
+    local  cp_vopt=''
+    local  rm_vopt=''
+    local  mkdir_vopt=''
+
+    if [ "x$verbose" = "x1" ]; then
+	ln_vopt=-v
+	cp_vopt=-v
+	rm_vopt=-v
+	mkdir_vopt=-v
+    fi
+
+    LN="ln"
+    CP="cp"
+    RM="rm"
+    MKDIR="mkdir"
+
+    if [ "x$no_act" = "x1" ]; then
+	LN="echo $LN"
+	CP="echo $CP"
+	RM="echo $RM"
+	MKDIR="echo $MKDIR"
+    fi
+
+    LN="$LN $ln_vopt"
+    CP="$CP $cp_vopt"
+    RM="$RM $rm_vopt"
+    MKDIR="$MKDIR $mkdir_vopt"
+}
 
 function vecho () {
     if [ "x$verbose" = "x1" ]; then
