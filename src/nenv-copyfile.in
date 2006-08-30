@@ -1,4 +1,6 @@
 #! /bin/bash -e
+PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+set -e
 
 program="$0"
 
@@ -62,6 +64,16 @@ if [ "x$file" = "x" -o "x$src" = "x" -o "x$dest" = "x" ]; then
 fi
 srcconf=`nenv_confdir $src`
 destconf=`nenv_confdir $dest`
+
+if [ ! -d $srcconf ]; then
+    echo "No such environment: $src"
+    exit 1
+fi
+
+if [ ! -d $destconf ]; then
+    echo "No such environment: $dest"
+    exit 1
+fi
 
 if [ x`expr match "$file" "/"` = "x0" ]; then
     echo "FILE_TO_ADD must be absolute path"

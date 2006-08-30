@@ -1,4 +1,6 @@
-#! /bin/bash -e
+#! /bin/bash
+PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+set -e
 
 program="$0"
 
@@ -54,8 +56,8 @@ if [ ! -x $common_funcs ]; then
 fi
 
 . ${common_funcs}
-def_command $verbose $no_act
 envdir=`nenv_confdir $envname`
+
 
 if [ ! -d ${cachedir} ]; then
     $RM -f ${cachedir}
@@ -70,10 +72,10 @@ if [ -d ${envdir} ]; then
     exit 0
 fi
 
+#$MKDIR -p ${envdir}
+
 default_env_dir=@sysconfdir@/network-env/envs/stand-alone
-if [ $default_env_dir = $envdir ]; then
-    $MKDIR -p ${envdir}
-else
+if [ $default_env_dir != $envdir ]; then
     if [ -d $default_env_dir ]; then
 	$CP -a ${default_env_dir} ${envdir}
     fi

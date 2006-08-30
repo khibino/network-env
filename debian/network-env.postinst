@@ -1,0 +1,12 @@
+#! /bin/sh
+## $Header: /var/lib/cvs/network-env/debian/network-env.postinst,v 1.1.1.1 2006/08/30 06:43:29 hibi Exp $
+##
+PATH="/usr/sbin:/sbin:/usr/bin:/bin"
+
+update-rc.d -f network-env remove >/dev/null
+
+#DEBHELPER#
+
+##
+## end of $Source: /var/lib/cvs/network-env/debian/network-env.postinst,v $
+##

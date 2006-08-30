@@ -1,4 +1,6 @@
-#! /bin/sh -e
+#! /bin/sh
+PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+set -e
 
 prefix=@prefix@
 exec_prefix=@exec_prefix@
