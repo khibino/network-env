@@ -1,5 +1,6 @@
-#! /bin/bash -e
+#! /bin/bash
 PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+set -e
 
 program="$0"
 
@@ -63,11 +64,19 @@ fi
 def_command $verbose $no_act
 envdir=`nenv_confdir $envname`
 
+if [ ! -d $envdir ]; then
+    echo "No such environment: $envname"
+    usage
+    exit 1
+fi
+
 if [ "x$no_act" != "x1" ]; then
-    if [ -e ${envdir}/etc/printcap ]; then
-	if [ -x /etc/init.d/lpd ] ; then
-	    /etc/init.d/lpd stop
-	fi
+    if [ -x /etc/init.d/lpd ] ; then
+	/etc/init.d/lpd stop
+    fi
+
+    if [ -x /etc/init.d/ntp ] ; then
+	/etc/init.d/ntp stop
     fi
 
     RESTART_DAEMONS="ssh autofs"
@@ -78,18 +87,13 @@ if [ "x$no_act" != "x1" ]; then
 	fi
     done
 
-    if [ -e ${envdir}/etc/defaultdomain ]; then
-	if [ -e ${envdir}/etc/yp.conf -o -e ${envdir}/etc/ypserv.conf ]; then
-	    if [ -x /etc/init.d/nis ] ; then
-		/etc/init.d/nis stop
-	    fi
+    if [ -e ${envdir}/etc/yp.conf -o -e ${envdir}/etc/ypserv.conf ]; then
+	if [ -x /etc/init.d/nis ] ; then
+	    /etc/init.d/nis stop
 	fi
     fi
 
-    if [ -e ${envdir}/etc/network/interfaces -o \
-	 -e ${envdir}/etc/network/interfaces.before_up ]; then
-	ifdown -a
-    fi
+    ifdown -a
 fi
 # endif [ "x$no_act" != "x1" ]
 
@@ -151,9 +155,11 @@ while read file ; do
 done
 
 if [ "x$no_act" != "x1" ]; then
-    if [ -e ${envdir}/etc/yp.conf -o -e ${envdir}/etc/ypserv.conf ]; then
-	if [ -x /etc/init.d/nis ] ; then
-	    /etc/init.d/nis start
+    if [ -e ${envdir}/etc/defaultdomain ]; then
+	if [ -e ${envdir}/etc/yp.conf -o -e ${envdir}/etc/ypserv.conf ]; then
+	    if [ -x /etc/init.d/nis ] ; then
+		/etc/init.d/nis start
+	    fi
 	fi
     fi
 
@@ -162,6 +168,15 @@ if [ "x$no_act" != "x1" ]; then
 	    /etc/init.d/$d start
 	fi
     done
+
+    if [ -e ${envdir}/etc/ntp.conf ]; then
+	if [ -x /etc/init.d/ntpdate ] ; then
+	    /etc/init.d/ntpdate start
+	fi
+	if [ -x /etc/init.d/ntp ] ; then
+	    /etc/init.d/ntp start
+	fi
+    fi
 
     if [ -e ${envdir}/etc/printcap ]; then
 	if [ -x /etc/init.d/lpd ] ; then

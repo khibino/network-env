@@ -1,5 +1,6 @@
-#! /bin/bash -e
+#! /bin/bash
 PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+set -e
 
 srcfile=common-funcs.in
 

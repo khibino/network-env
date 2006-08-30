@@ -2,11 +2,11 @@ Source: network-env
 Section: admin
 Priority: optional
 Maintainer: HIBINO Kei <hibi@utmc.or.jp>
-Build-Depends-Indep: debhelper (>> 2.0.0)
-Standards-Version: 3.5.2
+Build-Depends: debhelper (>> 4.0.0)
+Standards-Version: 3.7.2
 
 Package: network-env
 Architecture: all
 Depends:
-Description: Setting up mobile network environment
- Setting up mobile network environment.
+Description: Mobile network environment management tool
+ Switching network environment for example on mobile machine.

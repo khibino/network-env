@@ -1,5 +1,6 @@
-#! /bin/bash -e
+#! /bin/bash
 PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+set -e
 
 program="$0"
 
@@ -9,8 +10,8 @@ line="$2"
 common_funcs=@libdir@/network-env/common-funcs
 
 if [ ! -x $common_funcs ]; then
-    echo "Installation doesn't finish correctly!"
-    echo "$common_funcs is not found!"
+	echo "Installation doesn't finish correctly!"
+	echo "$common_funcs is not found!"
 fi
 
 . ${common_funcs}
@@ -19,8 +20,19 @@ envdir=`nenv_confdir $envname`
 
 ip_addr=""
 if [ -r ${envdir}/etc/network/interfaces ]; then
-    default_if=`grep 'iface[ \t]*\(eth\|ppp\|wvlan\)' ${envdir}/etc/network/interfaces | awk '{ print $2 }'`
-    ip_addr=`ifconfig $default_if | grep 'inet addr' | awk -F ':' '{ print $2 }' | awk '{ print $1 }'`
+	if_list=`grep -v '^#' ${envdir}/etc/network/interfaces | grep '^iface[ \t]*\(eth\|ppp\|wvlan\)' | awk '{ print $2 }'`
+	default_if=`grep -v '^#' ${envdir}/etc/network/interfaces | grep '^auto[ \t]*\(eth\|ppp\|wvlan\)' | awk '{ print $2 }' | tail -1`
+	found=0
+	for iface in $if_list ; do
+		if [ "x$iface" = "x$default_if" ]; then
+			found=1
+		fi
+	done
+	if [ "x$found" = x1 ]; then
+		ip_addr=`ifconfig $default_if | grep 'inet addr' | awk -F ':' '{ print $2 }' | awk '{ print $1 }'`
+	else
+		ip_addr='127.0.0.1'
+	fi
 fi
 
 ENVNAME=$envname

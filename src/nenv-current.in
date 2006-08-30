@@ -1,5 +1,6 @@
-#! /bin/sh -e
+#! /bin/sh
 PATH="/sbin:/usr/sbin:/bin:/usr/bin"
+set -e
 
 if [ -e @sysconfdir@/network-env/current_env ]; then
     cat @sysconfdir@/network-env/current_env
