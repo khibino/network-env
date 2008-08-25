@@ -1,4 +1,13 @@
 #! /bin/sh
+### BEGIN INIT INFO
+# Provides:          network-env
+# Required-Start:    $local_fs $remote_fs
+# Required-Stop:     $local_fs $remote_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start or stop the mobile network environment.
+### END INIT INFO
+
 PATH="/sbin:/usr/sbin:/bin:/usr/bin"
 set -e
 

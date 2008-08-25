@@ -71,7 +71,9 @@ if [ ! -d $envdir ]; then
 fi
 
 if [ "x$no_act" != "x1" ]; then
-    if [ -x /etc/init.d/lpd ] ; then
+    if [ -x /etc/init.d/cups ] ; then
+	/etc/init.d/cups stop
+    elif [ -x /etc/init.d/lpd ] ; then
 	/etc/init.d/lpd stop
     fi
 
@@ -93,7 +95,12 @@ if [ "x$no_act" != "x1" ]; then
 	fi
     fi
 
-    ifdown -a
+
+    ifdown -n -a -v 2>&1 | grep ^ifconfig | while read cmd iface op ; do
+	    if [ x$iface != xlo ]; then
+		    ifdown $iface
+	    fi
+    done
 fi
 # endif [ "x$no_act" != "x1" ]
 
@@ -179,7 +186,9 @@ if [ "x$no_act" != "x1" ]; then
     fi
 
     if [ -e ${envdir}/etc/printcap ]; then
-	if [ -x /etc/init.d/lpd ] ; then
+	if [ -x /etc/init.d/cups ] ; then
+	    /etc/init.d/cups start
+	elif [ -x /etc/init.d/lpd ] ; then
 	    /etc/init.d/lpd start
 	fi
     fi

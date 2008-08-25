@@ -2,4 +2,3 @@ etc/network-env/envs
 etc/network-env/cache
 usr/sbin
 usr/lib/network-env
-usr/share/man/man8
