@@ -1,0 +1,40 @@
+# /etc/network/interfaces -- configuration file for ifup(8), ifdown(8)
+
+# The loopback interface
+# automatically added when upgrading
+auto lo
+iface lo inet loopback
+
+# The first network card - this entry was created during the Debian installation
+# automatically added when upgrading
+auto eth0
+iface eth0 inet static
+	address 192.168.1.77
+	network 192.168.0.0
+	netmask 255.255.254.0
+	broadcast 192.168.1.255
+	gateway 192.168.0.1
+
+noauto eth1
+
+#iface eth1 inet dhcp
+#	wireless-key 87c3f86fd5bbdf56b26157f370
+#	wireless-mode Ad-Hoc
+
+iface eth1 inet static
+	address 192.168.1.78
+	netmask 255.255.254.0
+	network 192.168.0.0
+	broadcast 192.168.1.255
+	gateway 192.168.0.1
+	metric 10
+	wireless-key1 87c3f86fd5bbdf56b26157f370
+	wireless-mode Managed
+
+##    KEY="87c3f86fd5bbdf56b26157f370" # ASAHI Net IH
+##    KEY="736b1ada80a2304abfbfa747ed" # KDD 5F
+
+
+#
+# end of /etc/network/interfaces
+#

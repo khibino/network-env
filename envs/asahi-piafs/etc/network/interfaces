@@ -1,0 +1,10 @@
+# /etc/network/interfaces -- configuration file for ifup(8), ifdown(8)
+
+# The loopback interface
+# automatically added when upgrading
+auto lo
+iface lo inet loopback
+
+auto ppp0
+iface ppp0 inet ppp
+	provider asahi-dal

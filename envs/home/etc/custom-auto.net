@@ -1,0 +1,15 @@
+# $  $
+# This is an automounter map and it has the following format
+# key [ -mount-options-separated-by-comma ] location
+# Details may be found in the autofs(5) manpage
+# kernel		-ro		ftp.kernel.org:/pub/linux
+win-archive		-rw		pear:/export/win-archive
+mpegaudio		-rw		pear:/export/mpegaudio
+local-src	-rw		pear:/usr/local/src
+apt	-rw		pear:/export/apt
+local-pkg	-rw		pear:/export/local-pkg
+dav0		-rw		pear:/mnt/dav0
+dav1		-rw		pear:/mnt/dav1
+dav2		-rw		pear:/mnt/dav2
+dav3		-rw		pear:/mnt/dav3
+dav4		-rw		pear:/mnt/dav4

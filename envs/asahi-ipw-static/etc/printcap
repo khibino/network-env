@@ -1,0 +1,18 @@
+# /etc/printcap: printer capability database. See printcap(5).
+# You can use the filter entries df, tf, cf, gf etc. for
+# your own filters. See /etc/filter.ps, /etc/filter.pcl and
+# the printcap(5) manual page for further details.
+
+lp|Remote printer entry
+        :rm=amethyst
+        :rp=lp
+        :sd=/var/spool/lpd/remote
+        :if=/etc/magicfilter/ps600-filter
+        :af=/var/log/lp-acct:lf=/var/log/lp-errs
+        :mx#0
+        :pw#80:pl#66:px#1440
+        :sh
+
+#
+# end of printcap
+#

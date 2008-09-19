@@ -1,0 +1,27 @@
+# /etc/network/interfaces -- configuration file for ifup(8), ifdown(8)
+
+# The loopback interface
+# automatically added when upgrading
+auto lo
+iface lo inet loopback
+
+# The first network card - this entry was created during the Debian installation
+# automatically added when upgrading
+
+##    KEY="87c3f86fd5bbdf56b26157f370" # ASAHI Net IH
+
+auto eth0
+iface eth0 inet static
+	address 172.16.0.1
+	network 172.16.0.0
+	netmask 255.255.0.0
+	broadcast 172.16.255.255
+
+auto eth1
+iface eth1 inet dhcp
+	wireless-essid NETGEAR_SafeABs
+#	wireless-key restricted kogai
+#	wireless-key s:kogai
+#	wireless-ap 00:16:01:09:2C:CE
+#	wireless-channel 8
+	wireless-mode Auto

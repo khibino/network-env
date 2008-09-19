@@ -1,0 +1,15 @@
+# /etc/network/interfaces -- configuration file for ifup(8), ifdown(8)
+
+# The loopback interface
+# automatically added when upgrading
+auto lo
+iface lo inet loopback
+
+# The first network card - this entry was created during the Debian installation
+# automatically added when upgrading
+auto eth0
+iface eth0 inet static
+	address 202.224.34.29
+	netmask 255.255.255.224
+	broadcast 202.224.34.31
+	gateway 202.224.34.1

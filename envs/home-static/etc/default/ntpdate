@@ -1,0 +1,6 @@
+# servers to check.   (Separate multiple servers with spaces.)
+NTPSERVERS="172.20.0.1 ntp.asahi-net.or.jp"
+#
+# additional options for ntpdate
+#NTPOPTIONS="-v"
+NTPOPTIONS="-u"

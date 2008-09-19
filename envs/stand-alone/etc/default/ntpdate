@@ -1,0 +1,6 @@
+# servers to check.   (Separate multiple servers with spaces.)
+NTPSERVERS=""
+#
+# additional options for ntpdate
+#NTPOPTIONS="-v"
+NTPOPTIONS="-u"

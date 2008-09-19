@@ -1,0 +1,14 @@
+# $  $
+# This is an automounter map and it has the following format
+# key [ -mount-options-separated-by-comma ] location
+# Details may be found in the autofs(5) manpage
+# kernel		-ro		ftp.kernel.org:/pub/linux
+home		-rw		anemone:/home
+home-ro		-ro		anemone:/home
+apt		-rw		deb-spool:/export/apt
+apt-ro		-ro		deb-spool:/export/apt
+local		-rw		anemone:/export/local
+local-ro	-ro		anemone:/export/local
+local-pkg	-rw		deb-spool:/export/local-pkg
+gate		-rw		gate-spool:/export/gate
+duo-data	-fstype=smbfs,username=ex8k-hbn,password=""		//duo/data
