@@ -4,6 +4,8 @@ set -e
 
 srcfile=common-funcs.in
 
+LANG=C
+
 function nenv_error () {
     msg=$1
     file=$2
