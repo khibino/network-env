@@ -1,3 +1,9 @@
+network-env (0.4.1) unstable; urgency=low
+
+  * Add dependency.
+
+ -- HIBINO Kei <hibi@utmc.or.jp>  Wed, 25 Feb 2009 22:07:05 +0900
+
 network-env (0.4.0) unstable; urgency=low
 
   * Setting for CUPS.

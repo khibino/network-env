@@ -20,8 +20,8 @@ envdir=`nenv_confdir $envname`
 
 ip_addr=""
 if [ -r ${envdir}/etc/network/interfaces ]; then
-	if_list=`grep -v '^#' ${envdir}/etc/network/interfaces | grep '^iface[ \t]*\(eth\|ppp\|wvlan\)' | awk '{ print $2 }'`
-	default_if=`grep -v '^#' ${envdir}/etc/network/interfaces | grep '^auto[ \t]*\(eth\|ppp\|wvlan\)' | awk '{ print $2 }' | tail -1`
+	if_list=`grep -v '^#' ${envdir}/etc/network/interfaces | grep '^iface[ \t]*\([^ \t]*\)' | awk '{ print $2 }'`
+	default_if=`grep -v '^#' ${envdir}/etc/network/interfaces | grep '^auto[ \t]*\([^ \t]*\)' | awk '{ print $2 }' | tail -1`
 	found=0
 	for iface in $if_list ; do
 		if [ "x$iface" = "x$default_if" ]; then
@@ -29,7 +29,14 @@ if [ -r ${envdir}/etc/network/interfaces ]; then
 		fi
 	done
 	if [ "x$found" = x1 ]; then
-		ip_addr=`ifconfig $default_if | grep 'inet addr' | awk -F ':' '{ print $2 }' | awk '{ print $1 }'`
+		while true; do
+			ip_addr=`ifconfig $default_if | grep 'inet addr' | awk -F ':' '{ print $2 }' | awk '{ print $1 }'`
+			if [ x"$ip_addr" != x ]; then
+				break
+			fi
+			sleep 0.5
+			vecho "to get IP address of interface $default_if"
+		done
 	else
 		ip_addr='127.0.0.1'
 	fi
@@ -40,6 +47,6 @@ IP_ADDR=$ip_addr
 LINE=$line
 
 sed \
--e 's/${ENVNAME}/'${ENVNAME}'/g' \
--e 's/${LINE}/'${LINE}'/g' \
--e 's/${IP_ADDR}/'${IP_ADDR}'/g'
+	-e 's/${ENVNAME}/'${ENVNAME}'/g' \
+	-e 's/${LINE}/'${LINE}'/g' \
+	-e 's/${IP_ADDR}/'${IP_ADDR}'/g'

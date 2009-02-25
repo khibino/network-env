@@ -8,7 +8,7 @@ args=`getopt --name="$program" --options="hnvq" --longoptions="help,no-act,verbo
 eval set -- "$args"
 
 function usage() {
-    cat <<"EOF"
+	cat <<"EOF"
 Usage: $program [-hnq] ENV_LOGICAL_NAME
 EOF
 }
@@ -17,33 +17,33 @@ verbose=1
 no_act=0
 
 while true ; do
-    case "$1" in
-    -h|--help)
-	usage
-	exit 0
-	;;
-    -v|--verbose)
-	verbose=1
-	shift
-	;;
-    -q|--quiet)
-	verbose=0
-	shift
-	;;
-    --)
-	shift
-	break
-	;;
-    *)
-	echo "$program getopt(1) internal error!!($1)"
-	exit 1
-	;;
-    esac
+	case "$1" in
+		-h|--help)
+			usage
+			exit 0
+			;;
+		-v|--verbose)
+			verbose=1
+			shift
+			;;
+		-q|--quiet)
+			verbose=0
+			shift
+			;;
+		--)
+			shift
+			break
+			;;
+		*)
+			echo "$program getopt(1) internal error!!($1)"
+			exit 1
+			;;
+	esac
 done
 
 if [ "x$1" = "x" ]; then
-    usage
-    exit
+	usage
+	exit
 fi
 
 envname="$1"
@@ -51,8 +51,8 @@ envname="$1"
 common_funcs=@libdir@/network-env/common-funcs
 
 if [ ! -x $common_funcs ]; then
-    echo "Installation doesn't finish correctly!"
-    echo "$common_funcs is not found!"
+	echo "Installation doesn't finish correctly!"
+	echo "$common_funcs is not found!"
 fi
 
 . ${common_funcs}
@@ -60,23 +60,23 @@ envdir=`nenv_confdir $envname`
 
 
 if [ ! -d ${cachedir} ]; then
-    $RM -f ${cachedir}
-    $MKDIR -p ${cachedir}
-    true
+	$RM -f ${cachedir}
+	$MKDIR -p ${cachedir}
+	true
 fi
 
 if [ -d ${envdir} ]; then
-    if [ "${envname}" != "stand-alone" ]; then
-	echo "warning: Environment ${envname} is already exist."
-    fi
-    exit 0
+	if [ "${envname}" != "stand-alone" ]; then
+		echo "warning: Environment ${envname} is already exist."
+	fi
+	exit 0
 fi
 
 #$MKDIR -p ${envdir}
 
 default_env_dir=@sysconfdir@/network-env/envs/stand-alone
 if [ $default_env_dir != $envdir ]; then
-    if [ -d $default_env_dir ]; then
-	$CP -a ${default_env_dir} ${envdir}
-    fi
+	if [ -d $default_env_dir ]; then
+		$CP -a ${default_env_dir} ${envdir}
+	fi
 fi

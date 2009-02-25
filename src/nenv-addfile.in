@@ -17,65 +17,65 @@ verbose=1
 no_act=0
 
 while true ; do
-    case "$1" in
-    -h|--help)
-	usage
-	exit 0
-	;;
-    -n|--no-act)
-	no_act=1
-	shift
-	;;
-    -v|--verbose)
-	verbose=1
-	shift
-	;;
-    -q|--quiet)
-	verbose=0
-	shift
-	;;
-    --)
-	shift
-	break
-	;;
-    *)
-	echo "$program getopt(1) internal error!!($1)"
-	exit 1
-	;;
-    esac
+	case "$1" in
+		-h|--help)
+			usage
+			exit 0
+			;;
+		-n|--no-act)
+			no_act=1
+			shift
+			;;
+		-v|--verbose)
+			verbose=1
+			shift
+			;;
+		-q|--quiet)
+			verbose=0
+			shift
+			;;
+		--)
+			shift
+			break
+			;;
+		*)
+			echo "$program getopt(1) internal error!!($1)"
+			exit 1
+			;;
+	esac
 done
 
 file="$1"
 if [ "x$file" = "x" ]; then
-    usage
-    exit
+	usage
+	exit
 fi
 
 common_funcs=@libdir@/network-env/common-funcs
 
 if [ ! -x $common_funcs ]; then
-    echo "Installation doesn't finish correctly!"
-    echo "$common_funcs is not found!"
+	echo "Installation doesn't finish correctly!"
+	echo "$common_funcs is not found!"
 fi
 
 . ${common_funcs}
 def_command $verbose $no_act
 
 if [ x`expr match "$file" "/"` = "x0" ]; then
-    echo "FILE_TO_ADD must be absolute path."
-    exit 1
+	echo "FILE_TO_ADD must be absolute path."
+	exit 1
 fi
 
 if [ -e ${cachedir}${file} ]; then
-    echo "${file} already have been added."
-    exit 1
+	echo "${file} already have been added."
+	exit 1
 fi
 
 do_cache ${file}
 
 for env in `nenv-list`
 do
-    dest=@sysconfdir@/network-env/envs/${env}${file}
-    $MKDIR -p `dirname ${dest}`
-    $CP -p ${file} ${dest}
+	dest=@sysconfdir@/network-env/envs/${env}${file}
+	$MKDIR -p `dirname ${dest}`
+	$CP -p ${file} ${dest}
 done

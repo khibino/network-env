@@ -7,6 +7,6 @@ Standards-Version: 3.8.0
 
 Package: network-env
 Architecture: all
-Depends:
+Depends: ifupdown, findutils
 Description: Mobile network environment management tool
  Switching network environment for example on mobile machine.
