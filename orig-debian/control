@@ -1,12 +1,12 @@
 Source: network-env
 Section: admin
 Priority: optional
-Maintainer: HIBINO Kei <hibi@utmc.or.jp>
-Build-Depends: debhelper (>= 5.0.0)
-Standards-Version: 3.8.0
+Maintainer: Kei HIBINO <hibi@utmc.or.jp>
+Build-Depends: debhelper (>= 7.0.0)
+Standards-Version: 3.9.1
 
 Package: network-env
 Architecture: all
-Depends: ifupdown, findutils
+Depends: ${misc:Depends}, ifupdown
 Description: Mobile network environment management tool
  Switching network environment for example on mobile machine.

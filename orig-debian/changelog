@@ -1,3 +1,9 @@
+network-env (0.4.2) unstable; urgency=low
+
+  * Along with new debian-policy.
+
+ -- Kei HIBINO <hibi@utmc.or.jp>  Wed, 22 Jun 2011 17:45:31 +0900
+
 network-env (0.4.1) unstable; urgency=low
 
   * Add dependency.
